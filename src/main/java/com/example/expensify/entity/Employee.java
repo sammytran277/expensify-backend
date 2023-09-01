@@ -22,7 +22,7 @@ public class Employee extends ExpensifyUser {
   }
 
   public Employee(String username, String password, List<Expense> expenses) {
-    super(username, password, Role.EMPLOYEE);
+    super(username, password, Role.ROLE_EMPLOYEE);
     this.expenses = expenses;
   }
 

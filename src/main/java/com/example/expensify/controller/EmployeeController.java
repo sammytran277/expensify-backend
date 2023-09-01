@@ -2,12 +2,14 @@ package com.example.expensify.controller;
 
 import com.example.expensify.entity.Employee;
 import com.example.expensify.entity.Expense;
+import com.example.expensify.entity.ExpensifyUser;
 import com.example.expensify.entity.Status;
 import com.example.expensify.service.EmployeeService;
 import com.example.expensify.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +33,11 @@ public class EmployeeController {
 
   @GetMapping("/employees/{employee_id}/expenses")
   public Iterable<Expense> findExpensesByEmployeeId(
-      @PathVariable(value = "employee_id") Integer employeeId) {
+      @PathVariable(value = "employee_id") Integer employeeId,
+      @AuthenticationPrincipal ExpensifyUser expensifyUser) {
+    if (!expensifyUser.getId().equals(employeeId)) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    }
     return employeeService
         .findById(employeeId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
@@ -40,7 +46,12 @@ public class EmployeeController {
 
   @PostMapping("/employees/{employee_id}/expenses")
   public Expense addOneExpense(
-      @PathVariable(value = "employee_id") Integer employeeId, @RequestBody Expense expense) {
+      @PathVariable(value = "employee_id") Integer employeeId,
+      @RequestBody Expense expense,
+      @AuthenticationPrincipal ExpensifyUser expensifyUser) {
+    if (!expensifyUser.getId().equals(employeeId)) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    }
     Employee employee =
         employeeService
             .findById(employeeId)
@@ -51,7 +62,11 @@ public class EmployeeController {
   @DeleteMapping("/employees/{employee_id}/expenses/{expense_id}")
   public ResponseEntity<Void> deleteOneExpense(
       @PathVariable(value = "employee_id") Integer employeeId,
-      @PathVariable(value = "expense_id") Integer expenseId) {
+      @PathVariable(value = "expense_id") Integer expenseId,
+      @AuthenticationPrincipal ExpensifyUser expensifyUser) {
+    if (!expensifyUser.getId().equals(employeeId)) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    }
     Employee employee =
         employeeService
             .findById(employeeId)

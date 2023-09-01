@@ -11,6 +11,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class ExpensifyApplication {
@@ -21,13 +23,15 @@ public class ExpensifyApplication {
 
   @Bean
   public CommandLineRunner initDatabase(
-      EmployeeRepository employeeRepository, ReviewerRepository reviewerRepository) {
+      EmployeeRepository employeeRepository,
+      ReviewerRepository reviewerRepository,
+      PasswordEncoder passwordEncoder) {
     return args -> {
       List<Employee> employees =
           List.of(
               new Employee(
                   "employee_1",
-                  "password",
+                  passwordEncoder.encode("password"),
                   List.of(
                       Expense.builder()
                           .merchant("merchant_1")
@@ -35,14 +39,19 @@ public class ExpensifyApplication {
                           .purchaseDate(LocalDate.now())
                           .amount(123.45)
                           .build())),
-              new Employee("employee_2", "password"),
-              new Employee("employee_3", "password"));
-      Reviewer reviewer = new Reviewer("reviewer_1", "password");
-      Reviewer anotherReviewer = new Reviewer("reviewer_2", "password");
+              new Employee("employee_2", passwordEncoder.encode("password")),
+              new Employee("employee_3", passwordEncoder.encode("password")));
+      Reviewer reviewer = new Reviewer("reviewer_1", passwordEncoder.encode("password"));
+      Reviewer anotherReviewer = new Reviewer("reviewer_2", passwordEncoder.encode("password"));
 
       employees.forEach(employeeRepository::save);
       reviewerRepository.save(reviewer);
       reviewerRepository.save(anotherReviewer);
     };
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 }

@@ -85,7 +85,11 @@ public class ExpensifyUser implements UserDetails {
   }
 
   public enum Role {
-    EMPLOYEE,
-    REVIEWER
+    ROLE_EMPLOYEE,
+    ROLE_REVIEWER;
+
+    public String withoutRolePrefix() {
+      return name().substring(5);
+    }
   }
 }
