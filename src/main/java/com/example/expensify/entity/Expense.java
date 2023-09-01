@@ -1,5 +1,8 @@
 package com.example.expensify.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +14,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "expenses")
+@JsonDeserialize(builder = Expense.Builder.class)
 public class Expense {
 
   @Id
@@ -21,6 +25,7 @@ public class Expense {
 
   private String description;
 
+  @JsonProperty("purchase_date")
   private LocalDate purchaseDate;
 
   private double amount;
@@ -38,16 +43,42 @@ public class Expense {
     this.status = Status.builder().state(Status.State.IN_REVIEW).build();
   }
 
+  public Integer getId() {
+    return this.id;
+  }
+
+  public String getMerchant() {
+    return this.merchant;
+  }
+
+  public String getDescription() {
+    return this.description;
+  }
+
+  public LocalDate getPurchaseDate() {
+    return this.purchaseDate;
+  }
+
+  public double getAmount() {
+    return this.amount;
+  }
+
+  public Status getStatus() {
+    return this.status;
+  }
+
   public static Builder builder() {
     return new Builder();
   }
 
+  @JsonPOJOBuilder(withPrefix = "")
   public static class Builder {
 
     private String merchant;
 
     private String description;
 
+    @JsonProperty("purchase_date")
     private LocalDate purchaseDate;
 
     private double amount;

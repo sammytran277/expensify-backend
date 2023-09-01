@@ -1,5 +1,6 @@
 package com.example.expensify.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -40,31 +41,45 @@ public class ExpensifyUser implements UserDetails {
   }
 
   @Override
+  @JsonIgnore
   public String getPassword() {
     return this.password;
   }
 
   @Override
+  @JsonIgnore
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return Collections.singleton(new SimpleGrantedAuthority(role.toString()));
   }
 
+  public Integer getId() {
+    return this.id;
+  }
+
+  public Role getRole() {
+    return this.role;
+  }
+
   @Override
+  @JsonIgnore
   public boolean isAccountNonExpired() {
     return true;
   }
 
   @Override
+  @JsonIgnore
   public boolean isAccountNonLocked() {
     return true;
   }
 
   @Override
+  @JsonIgnore
   public boolean isCredentialsNonExpired() {
     return true;
   }
 
   @Override
+  @JsonIgnore
   public boolean isEnabled() {
     return true;
   }

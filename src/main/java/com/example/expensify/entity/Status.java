@@ -1,5 +1,6 @@
 package com.example.expensify.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,8 +21,10 @@ public class Status {
   @Enumerated(value = EnumType.STRING)
   private State state;
 
+  @JsonProperty("reviewed_by")
   private String reviewedBy;
 
+  @JsonProperty("review_date")
   private LocalDate reviewDate;
 
   private String comment;
@@ -33,6 +36,29 @@ public class Status {
     this.reviewedBy = builder.reviewedBy;
     this.reviewDate = builder.reviewDate;
     this.comment = builder.comment;
+  }
+
+  public void changeTo(Status status) {
+    this.state = status.getState();
+    this.reviewedBy = status.getReviewedBy();
+    this.reviewDate = status.getReviewDate();
+    this.comment = status.getComment();
+  }
+
+  public State getState() {
+    return this.state;
+  }
+
+  public String getReviewedBy() {
+    return this.reviewedBy;
+  }
+
+  public LocalDate getReviewDate() {
+    return this.reviewDate;
+  }
+
+  public String getComment() {
+    return this.comment;
   }
 
   public static Builder builder() {
